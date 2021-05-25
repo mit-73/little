@@ -29,8 +29,8 @@ extension FutureEitherX<L, R> on Future<Either<L, R>> {
       then((Either<L, R> either) => either.isRight);
 
   Future<void> either({
-    required Callback<L> onLeft,
-    required Callback<R> onRight,
+    required EitherCallback<L> onLeft,
+    required EitherCallback<R> onRight,
   }) async =>
       (await this).either(
         onLeft: onLeft,
@@ -38,8 +38,8 @@ extension FutureEitherX<L, R> on Future<Either<L, R>> {
       );
 
   Future<T> whenEither<T>({
-    required TypeCallback<T, L> onLeft,
-    required TypeCallback<T, R> onRight,
+    required WhenCallback<T, L> onLeft,
+    required WhenCallback<T, R> onRight,
   }) =>
       then((Either<L, R> either) => either.when(
             onLeft: onLeft,
@@ -47,8 +47,8 @@ extension FutureEitherX<L, R> on Future<Either<L, R>> {
           ));
 
   Future<T> whenEitherAsync<T>({
-    required AsyncTypeCallback<T, L> onLeft,
-    required AsyncTypeCallback<T, R> onRight,
+    required AsyncWhenCallback<T, L> onLeft,
+    required AsyncWhenCallback<T, R> onRight,
   }) async =>
       (await this).whenAsync(
         onLeft: onLeft,
@@ -56,9 +56,9 @@ extension FutureEitherX<L, R> on Future<Either<L, R>> {
       );
 
   Future<T> maybeWhenEither<T>({
-    TypeCallback<T, L>? onLeft,
-    TypeCallback<T, R>? onRight,
-    required MaybeTypeCallback<T> orElse,
+    WhenCallback<T, L>? onLeft,
+    WhenCallback<T, R>? onRight,
+    required MaybeCallback<T> orElse,
   }) =>
       then((Either<L, R> either) => either.maybeWhen(
             onLeft: onLeft,
@@ -67,9 +67,9 @@ extension FutureEitherX<L, R> on Future<Either<L, R>> {
           ));
 
   Future<T> maybeWhenEitherAsync<T>({
-    AsyncTypeCallback<T, L>? onLeft,
-    AsyncTypeCallback<T, R>? onRight,
-    required AsyncMaybeTypeCallback<T> orElse,
+    AsyncWhenCallback<T, L>? onLeft,
+    AsyncWhenCallback<T, R>? onRight,
+    required AsyncMaybeCallback<T> orElse,
   }) async =>
       (await this).maybeWhenAsync(
         onLeft: onLeft,

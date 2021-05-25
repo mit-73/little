@@ -7,38 +7,38 @@ class Right<L, R> extends Either<L, R> {
 
   @override
   void either({
-    required Callback<L> onLeft,
-    required Callback<R> onRight,
+    required EitherCallback<L> onLeft,
+    required EitherCallback<R> onRight,
   }) =>
       onRight(value);
 
   @override
   T when<T>({
-    required TypeCallback<T, L> onLeft,
-    required TypeCallback<T, R> onRight,
+    required WhenCallback<T, L> onLeft,
+    required WhenCallback<T, R> onRight,
   }) =>
       onRight(value);
 
   @override
   Future<T> whenAsync<T>({
-    required AsyncTypeCallback<T, L> onLeft,
-    required AsyncTypeCallback<T, R> onRight,
+    required AsyncWhenCallback<T, L> onLeft,
+    required AsyncWhenCallback<T, R> onRight,
   }) async =>
       onRight(value);
 
   @override
   T maybeWhen<T>({
-    TypeCallback<T, L>? onLeft,
-    TypeCallback<T, R>? onRight,
-    required MaybeTypeCallback<T> orElse,
+    WhenCallback<T, L>? onLeft,
+    WhenCallback<T, R>? onRight,
+    required MaybeCallback<T> orElse,
   }) =>
       onRight != null ? onRight(value) : orElse();
 
   @override
   Future<T> maybeWhenAsync<T>({
-    AsyncTypeCallback<T, L>? onLeft,
-    AsyncTypeCallback<T, R>? onRight,
-    required AsyncMaybeTypeCallback<T> orElse,
+    AsyncWhenCallback<T, L>? onLeft,
+    AsyncWhenCallback<T, R>? onRight,
+    required AsyncMaybeCallback<T> orElse,
   }) async =>
       onRight != null ? onRight(value) : orElse();
 

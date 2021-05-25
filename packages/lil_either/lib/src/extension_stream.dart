@@ -9,8 +9,8 @@ extension StreamEitherX<L, R> on Stream<Either<L, R>> {
       every((Either<L, R> either) => either.isRight);
 
   Future<void> either({
-    required Callback<L> onLeft,
-    required Callback<R> onRight,
+    required EitherCallback<L> onLeft,
+    required EitherCallback<R> onRight,
   }) =>
       forEach((Either<L, R> either) => either.either(
             onLeft: onLeft,
@@ -18,8 +18,8 @@ extension StreamEitherX<L, R> on Stream<Either<L, R>> {
           ));
 
   Stream<T> whenEither<T>({
-    required TypeCallback<T, L> onLeft,
-    required TypeCallback<T, R> onRight,
+    required WhenCallback<T, L> onLeft,
+    required WhenCallback<T, R> onRight,
   }) =>
       map((Either<L, R> either) => either.when(
             onLeft: onLeft,
@@ -27,9 +27,9 @@ extension StreamEitherX<L, R> on Stream<Either<L, R>> {
           ));
 
   Stream<T> maybeWhenEither<T>({
-    TypeCallback<T, L>? onLeft,
-    TypeCallback<T, R>? onRight,
-    required MaybeTypeCallback<T> orElse,
+    WhenCallback<T, L>? onLeft,
+    WhenCallback<T, R>? onRight,
+    required MaybeCallback<T> orElse,
   }) =>
       map((Either<L, R> either) => either.maybeWhen(
             onLeft: onLeft,

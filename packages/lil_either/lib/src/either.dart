@@ -3,19 +3,29 @@ import 'dart:async';
 part 'left.dart';
 part 'right.dart';
 
-/// Signature of callbacks that have no arguments and return right or left value.
-typedef Callback<V> = void Function(V value);
+/// A callback that has a right or left value argument and returns nothing.
+typedef EitherCallback<V> = void Function(V value);
 
-typedef TypeCallback<T, V> = T Function(V value);
-typedef MaybeTypeCallback<T> = T Function();
+/// A callback that takes a right or left value argument and returns the async result of a function.
+typedef WhenCallback<T, V> = T Function(V value);
+
+/// A callback that has no arguments and returns the result of the `orElse` function.
+typedef MaybeCallback<T> = T Function();
+
+/// A callback that has a right or left argument and returns that same argument.
 typedef MapCallback<V> = V Function(V value);
 
-typedef AsyncTypeCallback<T, V> = FutureOr<T> Function(V value);
-typedef AsyncMaybeTypeCallback<T> = FutureOr<T> Function();
+/// A callback that takes a right or left value argument and returns the async result of a function.
+typedef AsyncWhenCallback<T, V> = FutureOr<T> Function(V value);
+
+/// A callback that has no arguments and returns the async result of the `orElse` function.
+typedef AsyncMaybeCallback<T> = FutureOr<T> Function();
+
+/// A callback that has a right or left argument and returns that same async argument.
 typedef AsyncMapCallback<V> = FutureOr<V> Function(V value);
 
-/// Lazy callbacks
-typedef Lazy<T> = T Function();
+/// Lazy callback
+typedef LazyCallback<T> = T Function();
 
 abstract class Either<L, R> {
   Either() {
@@ -28,13 +38,13 @@ abstract class Either<L, R> {
   factory Either.left(L value) => Left<L, R>(value);
 
   /// Lazy constructs a new [Either] from a [Left]
-  factory Either.leftLazy(Lazy<L> value) => Left<L, R>(value());
+  factory Either.leftLazy(LazyCallback<L> value) => Left<L, R>(value());
 
   /// Constructs a new [Either] from a [Right]
   factory Either.right(R value) => Right<L, R>(value);
 
   /// Lazy constructs a new [Either] from a [Right]
-  factory Either.rightLazy(Lazy<R> value) => Right<L, R>(value());
+  factory Either.rightLazy(LazyCallback<R> value) => Right<L, R>(value());
 
   /// If the condition is test then return [rightValue] in [Right] else [leftValue] in [Left]
   factory Either.condition(bool test, L leftValue, R rightValue) =>
@@ -42,12 +52,12 @@ abstract class Either<L, R> {
 
   /// If the condition is test then return lazy [rightValue] in [Right] else lazy [leftValue] in [Left]
   factory Either.conditionLazy(
-          bool test, Lazy<L> leftValue, Lazy<R> rightValue) =>
+          bool test, LazyCallback<L> leftValue, LazyCallback<R> rightValue) =>
       test ? Right<L, R>(rightValue()) : Left<L, R>(leftValue());
 
   /// Constructs a new [Either] from a function that might throw
   static Either<L, R> tryCatch<L, R>(
-    MaybeTypeCallback<R> onRight,
+    MaybeCallback<R> onRight,
   ) {
     try {
       return Right<L, R>(onRight());
@@ -85,8 +95,8 @@ abstract class Either<L, R> {
   /// if the result is an [left], it will be call in [onLeft],
   /// if it is a [right] it will be call in [onRight].
   void either({
-    required Callback<L> onLeft,
-    required Callback<R> onRight,
+    required EitherCallback<L> onLeft,
+    required EitherCallback<R> onRight,
   });
 
   /// Return the result in one of these functions.
@@ -94,27 +104,27 @@ abstract class Either<L, R> {
   /// if the result is an [Left], it will be returned in [onLeft],
   /// if it is a [Right] it will be returned in [onRight].
   T when<T>({
-    required TypeCallback<T, L> onLeft,
-    required TypeCallback<T, R> onRight,
+    required WhenCallback<T, L> onLeft,
+    required WhenCallback<T, R> onRight,
   });
 
   Future<T> whenAsync<T>({
-    required AsyncTypeCallback<T, L> onLeft,
-    required AsyncTypeCallback<T, R> onRight,
+    required AsyncWhenCallback<T, L> onLeft,
+    required AsyncWhenCallback<T, R> onRight,
   });
 
   /// The [maybeWhen] method is equivalent to [when], but doesn't require all callbacks to be specified.
   /// On the other hand, it adds an extra [orElse] required parameter, for fallback behavior.
   T maybeWhen<T>({
-    TypeCallback<T, L>? onLeft,
-    TypeCallback<T, R>? onRight,
-    required MaybeTypeCallback<T> orElse,
+    WhenCallback<T, L>? onLeft,
+    WhenCallback<T, R>? onRight,
+    required MaybeCallback<T> orElse,
   });
 
   Future<T> maybeWhenAsync<T>({
-    AsyncTypeCallback<T, L>? onLeft,
-    AsyncTypeCallback<T, R>? onRight,
-    required AsyncMaybeTypeCallback<T> orElse,
+    AsyncWhenCallback<T, L>? onLeft,
+    AsyncWhenCallback<T, R>? onRight,
+    required AsyncMaybeCallback<T> orElse,
   });
 
   Either<L, R> map({
