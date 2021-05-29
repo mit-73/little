@@ -1,8 +1,7 @@
 name: lil_either
-description: A new Flutter package project.
 version: 1.0.0
-author:
-homepage:
+description: The Either data type as an alternative to throwing exceptions
+homepage: https://github.com/mit-73/little
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

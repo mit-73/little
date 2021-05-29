@@ -1,14 +1,18 @@
 # lil_either
+[![pub package](https://img.shields.io/pub/v/lil_either.svg)](https://pub.dartlang.org/packages/lil_either)
 
-A new Flutter package project.
+The library for error handling and railway oriented programming.
 
-## Getting Started
+## Installation
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+Add on pubspec.yml:
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+```
+dependencies:
+  lil_either: ... // latest package version
+```
+
+## Example
+The [Example][example] is in the corresponding folder
+
+[example]: https://github.com/mit-73/little/tree/main/packages/lil_either/example/main.dart
