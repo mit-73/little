@@ -1,8 +1,13 @@
 part of 'either.dart';
 
+/// {@template right}
+/// Right is for the success case
+/// {@endtemplate}
 class Right<L, R> extends Either<L, R> {
+  /// {@macro right}
   Right(this.value);
 
+  /// A [Right] value
   final R value;
 
   @override

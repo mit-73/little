@@ -184,7 +184,119 @@ void main() {
     });
   });
 
-  group('Either future test', () {});
+  group('Either future test', () {
+    final Future<Either<MyException, MyResult>> left =
+        testCase.future(returnError: true).toEither<MyException>();
+    final Future<Either<MyException, MyResult>> right =
+        testCase.future().toEither<MyException>();
 
-  group('Either stream test', () {});
+    test('is', () async {
+      expect(await left.isEitherLeft, true);
+      expect(await left.isEitherRight, false);
+      expect(await right.isEitherLeft, false);
+      expect(await right.isEitherRight, true);
+    });
+
+    test('either', () {
+      left.either(
+        onLeft: (MyException v) => expect(v.runtimeType, MyException),
+        onRight: (MyResult v) => fail('Not be executed'),
+      );
+      right.either(
+        onLeft: (MyException v) => fail('Not be executed'),
+        onRight: (MyResult v) => expect(v.runtimeType, MyResult),
+      );
+    });
+
+    test('when', () async {
+      expect(
+        await left.whenEither<String>(
+          onLeft: (MyException v) => '${v.message} test',
+          onRight: (MyResult v) => '${v.message} test',
+        ),
+        'left test',
+      );
+      expect(
+        await right.whenEither<String>(
+          onLeft: (MyException v) => '${v.message} test',
+          onRight: (MyResult v) => '${v.message} test',
+        ),
+        'right test',
+      );
+    });
+
+    test('maybeWhen', () async {
+      expect(
+        await left.maybeWhenEither<String>(
+          // onLeft: (MyException v) => v.message,
+          onRight: (MyResult v) => v.message,
+          orElse: () => 'orElse',
+        ),
+        'orElse',
+      );
+      expect(
+        await right.maybeWhenEither<String>(
+          onLeft: (MyException v) => v.message,
+          // onRight: (MyResult v) => v.message,
+          orElse: () => 'orElse',
+        ),
+        'orElse',
+      );
+    });
+
+    test('map', () async {
+      expect(
+        await left
+            .mapEither(
+              onLeft: (MyException v) => v,
+              onRight: (MyResult v) => v,
+            )
+            .isEitherLeft,
+        true,
+      );
+      expect(
+        await left
+            .mapEither(
+              onLeft: (MyException v) => v,
+              onRight: (MyResult v) => v,
+            )
+            .isEitherRight,
+        false,
+      );
+      expect(
+        await right
+            .mapEither(
+              onLeft: (MyException v) => v,
+              onRight: (MyResult v) => v,
+            )
+            .isEitherRight,
+        true,
+      );
+      expect(
+        await right
+            .mapEither(
+              onLeft: (MyException v) => v,
+              onRight: (MyResult v) => v,
+            )
+            .isEitherLeft,
+        false,
+      );
+    });
+
+    test('swap', () async {
+      final Future<Either<MyResult, MyException>> _left = left.swapEither();
+      final Future<Either<MyResult, MyException>> _right = right.swapEither();
+
+      expect(await _left.isEitherLeft, false);
+      expect(await _left.isEitherRight, true);
+      expect(await _right.isEitherLeft, true);
+      expect(await _right.isEitherRight, false);
+    });
+  });
+
+  group('Either stream test', () {
+    // Stream<Either<MyException, MyResult>> stream = testCase.stream(10).toEither<MyException>();
+
+    // TODO add
+  });
 }

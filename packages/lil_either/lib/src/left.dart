@@ -1,8 +1,13 @@
 part of 'either.dart';
 
+/// {@template left}
+/// Left is for the error case
+/// {@endtemplate}
 class Left<L, R> extends Either<L, R> {
+  /// {@macro left}
   Left(this.value);
 
+  /// A [Left] value
   final L value;
 
   @override

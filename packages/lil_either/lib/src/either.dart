@@ -27,7 +27,12 @@ typedef AsyncMapCallback<V> = FutureOr<V> Function(V value);
 /// Lazy callback
 typedef LazyCallback<T> = T Function();
 
+/// {@template either}
+/// Either is an entity whose value can be of two different types, called left and right.
+/// By convention, Right is for the success case and Left for the error one.
+/// {@endtemplate}
 abstract class Either<L, R> {
+  /// {@macro either}
   Either() {
     if (!isLeft && !isRight) {
       throw Exception('The Either should be heir Left or Right.');
@@ -47,12 +52,19 @@ abstract class Either<L, R> {
   factory Either.rightLazy(LazyCallback<R> value) => Right<L, R>(value());
 
   /// If the condition is test then return [rightValue] in [Right] else [leftValue] in [Left]
-  factory Either.condition(bool test, L leftValue, R rightValue) =>
+  factory Either.condition({
+    required bool test,
+    required L leftValue,
+    required R rightValue,
+  }) =>
       test ? Right<L, R>(rightValue) : Left<L, R>(leftValue);
 
   /// If the condition is test then return lazy [rightValue] in [Right] else lazy [leftValue] in [Left]
-  factory Either.conditionLazy(
-          bool test, LazyCallback<L> leftValue, LazyCallback<R> rightValue) =>
+  factory Either.conditionLazy({
+    required bool test,
+    required LazyCallback<L> leftValue,
+    required LazyCallback<R> rightValue,
+  }) =>
       test ? Right<L, R>(rightValue()) : Left<L, R>(leftValue());
 
   /// Constructs a new [Either] from a function that might throw
@@ -108,6 +120,10 @@ abstract class Either<L, R> {
     required WhenCallback<T, R> onRight,
   });
 
+  /// Return the async result in one of these async functions.
+  ///
+  /// if the result is an [Left], it will be returned in [onLeft],
+  /// if it is a [Right] it will be returned in [onRight].
   Future<T> whenAsync<T>({
     required AsyncWhenCallback<T, L> onLeft,
     required AsyncWhenCallback<T, R> onRight,
@@ -121,17 +137,27 @@ abstract class Either<L, R> {
     required MaybeCallback<T> orElse,
   });
 
+  /// The [maybeWhenAsync] method is equivalent to [whenAsync], but doesn't require all callbacks to be specified.
+  /// On the other hand, it adds an extra [orElse] required parameter, for fallback behavior.
   Future<T> maybeWhenAsync<T>({
     AsyncWhenCallback<T, L>? onLeft,
     AsyncWhenCallback<T, R>? onRight,
     required AsyncMaybeCallback<T> orElse,
   });
 
+  /// Return the [Either] result in one of these functions.
+  ///
+  /// if the result is an [Left], it will be returned in [onLeft],
+  /// if it is a [Right] it will be returned in [onRight].
   Either<L, R> map({
     required MapCallback<L> onLeft,
     required MapCallback<R> onRight,
   });
 
+  /// Return the async [Either] result in one of these async functions.
+  ///
+  /// if the result is an [Left], it will be returned in [onLeft],
+  /// if it is a [Right] it will be returned in [onRight].
   Future<Either<L, R>> mapAsync({
     required AsyncMapCallback<L> onLeft,
     required AsyncMapCallback<R> onRight,
@@ -141,6 +167,7 @@ abstract class Either<L, R> {
   Either<F, S> cast<F, S>();
 
   /// Swap [Left] and [Right]
-  Either<R, L> swap() =>
-      when(onLeft: (L left) => Right<R, L>(left), onRight: (R right) => Left<R, L>(right));
+  Either<R, L> swap() => when(
+      onLeft: (L left) => Right<R, L>(left),
+      onRight: (R right) => Left<R, L>(right));
 }
