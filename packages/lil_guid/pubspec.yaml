@@ -1,0 +1,12 @@
+name: lil_guid
+version: 1.0.0
+description: GUID Generator and Parser for all Dart platforms (Web, VM, Flutter)
+homepage: https://github.com/mit-73/little
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+
+dev_dependencies:
+  test: ^1.17.4
